@@ -6,29 +6,32 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @RestController
 public class OTRApi {
 
     private OTRService otrService;
-    private GraphicRepo graphicRepo;
+    private List<Graphic> graphicList;
 
     @Autowired
-    public OTRApi (OTRService otrService, GraphicRepo graphicRepo) {
+    public OTRApi (OTRService otrService) {
         this.otrService = otrService;
-        this.graphicRepo = graphicRepo;
+        this.graphicList = new ArrayList<>();
     }
 
     @PostMapping("/api/otr")
     public String doOTR(@RequestBody Graphic graphic) {
         String otr = otrService.doOTR(graphic.getUrl());
         graphic.setContent(otr);
-        graphicRepo.save(graphic);
+        graphicList.add(graphic);
         return otr;
     }
 
     @GetMapping("/api/otr")
-    public Iterable<Graphic> getGraphic() {
-        return graphicRepo.findAll();
+    public List<Graphic> getGraphic() {
+        return  graphicList;
     }
 }
